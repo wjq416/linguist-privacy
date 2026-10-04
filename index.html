@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Linguist 网页翻译 · 隐私政策</title>
+<style>
+  :root { color-scheme: light dark; }
+  body { max-width: 860px; margin: 0 auto; padding: 32px 20px 80px; font: 16px/1.75 -apple-system, "Segoe UI", "Microsoft YaHei", sans-serif; }
+  h1 { font-size: 28px; margin: 0 0 4px; }
+  h2 { font-size: 20px; margin: 34px 0 10px; padding-bottom: 6px; border-bottom: 1px solid #e5e7eb; }
+  .meta { color: #6b7280; font-size: 14px; margin-bottom: 8px; }
+  table { border-collapse: collapse; width: 100%; margin: 12px 0; font-size: 14.5px; }
+  th, td { border: 1px solid #d1d5db; padding: 8px 10px; text-align: left; vertical-align: top; }
+  th { background: #f3f4f6; }
+  code { background: #f3f4f6; padding: 1px 5px; border-radius: 4px; font-size: 13.5px; }
+  ul, ol { padding-left: 22px; }
+  .warn { border-left: 4px solid #f59e0b; background: #fffbeb; padding: 10px 14px; margin: 12px 0; }
+  .en { color: #374151; }
+  footer { margin-top: 40px; color: #6b7280; font-size: 14px; }
+</style>
+</head>
+<body>
+<h1>Linguist 网页翻译 · 隐私政策</h1>
+<p class="meta"><strong>生效日期：2026 年 10 月 4 日</strong><br />
+<strong>适用范围：本政策适用于浏览器扩展 Linguist 网页翻译（manifest 版本 0.2.0）</strong></p>
+
+<div class="warn">
+<h3 style="margin-top:0">✅ 提交前检查（占位项已填，剩最后一步）</h3>
+<ul>
+<li><strong>联系邮箱</strong>：<code>2079544792@qq.com</code>（已填）</li>
+<li><strong>生效日期</strong>：2026 年 10 月 4 日（顶部 + 英文摘要，共 2 处）</li>
+<li><strong>隐私政策托管 URL</strong>：把本文件（<code>store/privacy-policy.html</code>）托管到静态站点（如 GitHub Pages / Cloudflare Pages），并把商店表单里的政策 URL 填成该地址</li>
+<li><strong>默认第三方接口名称与链接</strong>：当前默认 <code>https://api.deepseek.com/v1</code>（DeepSeek）—— 若改默认地址，必须同步更新第四节</li>
+<li><strong>与商店后台「数据使用」表单核对一致</strong>：逐项对照 <code>store/data-usage.md</code></li>
+</ul>
+</div>
+
+<h2>一、一句话摘要</h2>
+<p>Linguist 是一款<strong>完全在你自己浏览器里运行</strong>的整页翻译扩展，<strong>开发者没有服务器</strong>。当你翻译网页时，页面文本会通过 HTTPS <strong>直接发往你自己在设置页填写的</strong> OpenAI 兼容接口（默认是 <code>https://api.deepseek.com/v1</code>）。开发者<strong>不接收、不存储、也无法访问</strong>你的任何数据。</p>
+
+<h2>二、我们处理哪些数据、为什么（逐项）</h2>
+<table>
+<thead><tr><th>#</th><th>数据类别</th><th>具体内容</th><th>处理方式</th><th>源码依据</th></tr></thead>
+<tbody>
+<tr><td>1</td><td><strong>网页正文文本</strong>（website content）</td><td>你主动翻译（或你为某些站点开启了自动翻译）时，页面上的文本块；按批发送，默认每批不超过 1500 字符</td><td>在浏览器内读取后，经扩展的 service worker 发往<strong>你配置的接口</strong>以取得译文；译文插回页面</td><td><code>src/background/service-worker.ts:22-23</code>、<code>src/core/translator.ts:124-144</code></td></tr>
+<tr><td>2</td><td><strong>接口地址 / 模型名 / API Key</strong></td><td>你在设置页填写的信息</td><td>API Key 作为 <code>Authorization: Bearer …</code> 头发往<strong>你填写的那个地址</strong></td><td><code>src/core/defaults.ts:3-6</code>、<code>src/core/settings.ts:28,34</code>、<code>src/core/translator.ts:73,141</code></td></tr>
+<tr><td>3</td><td><strong>译文缓存</strong></td><td>键 = <code>hash(提示词版本 + 源语言 + 目标语言 + 模型 + 原文)</code>，值 = <strong>译文</strong>。<strong>原文不以明文形式存入缓存</strong></td><td>存在本地 <code>chrome.storage.local</code>，用于避免重复请求同一段文本</td><td><code>src/core/cache.ts:23-26,38,55</code></td></tr>
+<tr><td>4</td><td><strong>本地规则</strong></td><td>你在页面上用「调整这一块」或采纳 AI 建议后确认的排版规则（站点/页面匹配条件 + 选择器 + 动作）</td><td>仅存本地，不上传；删除存储即回到出厂行为</td><td><code>src/core/rules-store.ts:23,37</code></td></tr>
+<tr><td>5</td><td><strong>站点偏好</strong></td><td>自动翻译域名列表、禁用域名列表</td><td>仅存本地，用于判断某个站点要不要自动翻译</td><td><code>src/core/settings.ts:13-14</code>、<code>src/background/service-worker.ts:29-30</code></td></tr>
+<tr><td>6</td><td><strong>「让 AI 建议规则」时的事实包</strong></td><td>你点击该功能时，发送<strong>这一个块</strong>的信息：事实包（计算样式/几何等）+ <strong>最多 300 字原文</strong> + 本页适用的本地规则 + 硬失败 / 时间线摘要</td><td>发往<strong>你配置的接口</strong>；一次只涉及你选中的那一个块，不带整页内容</td><td><code>src/core/candidate.ts:88-96</code>、<code>src/core/translator.ts:54-89</code></td></tr>
+<tr><td>7</td><td><strong>诊断数据（Timeline / Layout Snapshot）</strong></td><td>每个块的翻译过程记录、版面快照</td><td><strong>只在内存里</strong>，不落盘、不外发；关闭标签页即消失</td><td><code>src/core/timeline.ts:10</code></td></tr>
+</tbody>
+</table>
+<p><code>chrome.storage.local</code> 的存储键：<code>settings</code>、<code>rules</code>、<code>tr:&lt;hash&gt;</code>（译文缓存）。</p>
+
+<h2>三、我们<strong>不</strong>做什么</h2>
+<ul>
+<li><strong>不</strong>收集浏览历史，<strong>不</strong>读取或上传书签、Cookie、密码、表单内容、输入框里的文字。</li>
+<li><strong>不</strong>设埋点、统计、崩溃上报或远程配置。<strong>全扩展只有两个网络调用点</strong>（<code>src/core/translator.ts:69</code> 与 <code>:137</code>），两者都指向<strong>你自己配置的地址</strong>，没有任何写死的第三方/开发者服务器。</li>
+<li><strong>不</strong>出售、出租或交易你的数据；<strong>不</strong>用于广告、用户画像、信用评估或贷款决策。</li>
+<li><strong>不</strong>把数据发给开发者或任何中间服务器；扩展不做二次转发。</li>
+</ul>
+
+<h2>四、数据发给第三方时的责任边界（重要，请务必读）</h2>
+<p>第 2 节第 1、6 项的数据会发送到<strong>你自行配置的第三方大模型接口</strong>。该接口的运营方如何处理这些数据（是否留存、保留多久、是否用于模型训练、日志与合规策略），<strong>由你与该服务商之间的条款决定，不在本扩展的控制范围内</strong>。请在使用前阅读对应服务商的隐私政策与数据处理条款。本扩展只负责把请求发到<strong>你填写的那个地址</strong>，不经过、也不受开发者控制。</p>
+<p>如果你使用默认地址 <code>https://api.deepseek.com/v1</code>，请阅读 DeepSeek 的隐私政策；如果你改成别的接口，请阅读对应服务商的政策。</p>
+
+<h2>五、API Key 的存储方式与风险（如实说明）</h2>
+<ul>
+<li><strong>存放位置（确切键名）</strong>：<code>chrome.storage.local</code> → 键 <strong><code>settings</code></strong> → 字段 <strong><code>apiKey</code></strong>（<code>src/core/settings.ts:4</code> 定义存储键名，<code>:34</code> 写入；<code>src/core/defaults.ts:5</code> 定义默认空值）。</li>
+<li><strong>是否同步到其它设备</strong>：<strong>不会</strong>。用的是 <code>storage.local</code> 而不是 <code>storage.sync</code>。</li>
+<li><strong>存储形式</strong>：<strong>明文</strong>。扩展<strong>没有</strong>做额外加密，也没有云端托管（<code>src/core/settings.ts:34</code>、<code>src/core/defaults.ts:5</code>）。</li>
+<li><strong>可见范围</strong>：设置页里用 password 输入框显示（<code>src/options/index.html:23</code>）；Key 只在本扩展的请求里使用（<code>src/core/translator.ts:73,141</code>）。</li>
+</ul>
+<div class="warn"><strong>风险如实告知</strong>：能读取这台电脑上该浏览器配置目录的人或程序，<strong>可以读到这个 Key</strong>。这是本地明文存储的固有限制。<br />
+<strong>建议</strong>：请使用<strong>可限额、可随时吊销</strong>的 Key，不要使用主账号的全权限 Key；一旦怀疑泄露，立刻到服务商后台吊销并更换。</div>
+
+<h2>六、数据保留与删除</h2>
+<ul>
+<li><strong>保留期限</strong>：本地数据一直保留，直到你自行删除；<strong>没有自动过期</strong>机制。</li>
+<li><strong>本地只存三个键（确切键名）</strong>：<code>settings</code>（设置，含 API Key）、<code>rules</code>（本地规则）、<strong><code>tr:&lt;hash&gt;</code></strong>（译文缓存；<code>tr:</code> 前缀见 <code>src/core/cache.ts:7</code>，键 = 前缀 + <code>hash(提示词版本|源语言|目标语言|模型|原文)</code>，见 <code>:23-26</code>）。</li>
+<li><strong>如何删除</strong>（当前版本<strong>没有</strong>内置的「清空译文缓存」按钮，如实说明）：
+  <ol>
+    <li><strong>移除扩展即清除</strong>：在 <code>chrome://extensions</code>（Edge 是 <code>edge://extensions</code>）里<strong>移除</strong>本扩展，Chrome/Edge 会删除该扩展的全部本地存储（<code>settings</code>、<code>rules</code>、所有 <code>tr:&lt;hash&gt;</code>）—— 这是浏览器在卸载时的行为，不需要你手动清理；</li>
+    <li><strong>只删某一类</strong>：在该扩展的开发者工具 → Application → Storage → Extension Storage 里，删掉 <code>tr:</code> 开头的键（只清译文缓存）、或 <code>rules</code>（只清本地规则）、或 <code>settings</code>（含 API Key）；</li>
+    <li><strong>只想清缓存</strong>：删掉全部 <code>tr:&lt;hash&gt;</code> 键即可，<code>settings</code> 与 <code>rules</code> 会保留。</li>
+  </ol>
+</li>
+<li><strong>开发者侧</strong>：没有任何副本（开发者没有服务器，也收不到任何数据）。</li>
+</ul>
+
+<h2>七、权限与数据最小化</h2>
+<p>当前 <code>public/manifest.json</code> 声明 <code>storage</code> / <code>activeTab</code> / <code>scripting</code> 三个权限与 <code>host_permissions: ["&lt;all_urls&gt;"]</code>；<strong>未声明</strong> <code>tabs</code>（也不需要）。每个权限的真实用途、调用点与「是否有冗余」的逐项结论，见仓库里的 <code>store/permission-justification.md</code>。</p>
+
+<h2>八、儿童与特定地区</h2>
+<p>本扩展不面向 13 岁以下儿童，也不针对特定司法辖区做定向的数据处理。</p>
+
+<h2>九、政策变更</h2>
+<p>本政策如有变更，会更新本文件顶部「生效日期」，并在扩展的版本更新说明中提示重大变化。</p>
+
+<h2>十、联系方式</h2>
+<p><strong>联系邮箱：2079544792@qq.com</strong></p>
+
+<hr />
+<h2 class="en">English Summary</h2>
+<div class="en">
+<p>Linguist is a fully local, browser-only page-translation extension. <strong>The developer operates no server.</strong></p>
+<ul>
+<li><strong>What leaves your browser:</strong> the page text you choose to translate (sent in batches), plus — only when you use the "AI suggests a rule" feature — a small fact pack for the single block you selected (including up to 300 characters of its source text). Both are sent <strong>directly to the OpenAI-compatible endpoint that you configure yourself</strong> (default <code>https://api.deepseek.com/v1</code>), using your own API key.</li>
+<li><strong>What stays local:</strong> your API key, settings, your domain preferences, your local layout rules, and a translation cache — all in <code>chrome.storage.local</code>. The cache key is a hash of prompt version/languages/model/source text, so the source text itself is not stored in plaintext.</li>
+<li><strong>What we never do:</strong> no browsing history, no cookies, no bookmarks, no form data, no analytics or telemetry, no ads, no selling or sharing of data with the developer or any third party. The extension makes exactly two network calls, both to the endpoint you configure.</li>
+<li><strong>Responsibility boundary:</strong> the third-party model provider you configure handles retention/training/logging under <strong>its own</strong> terms. Please review that provider's privacy policy.</li>
+<li><strong>API key:</strong> stored in plaintext in <code>chrome.storage.local</code>. Anyone with access to this browser profile can read it. Use a scoped, revocable key.</li>
+<li><strong>Deletion:</strong> remove the extension, or delete the <code>tr:</code>, <code>rules</code>, <code>settings</code> keys from extension storage. There is currently no in-app "clear cache" button.</li>
+<li><strong>Contact:</strong> 2079544792@qq.com</li>
+</ul>
+<p><em>Effective date: October 4, 2026.</em></p>
+</div>
+
+<footer>Linguist 网页翻译 · 本页与仓库中的 privacy-policy.md 内容一致，可直接托管到 GitHub Pages 等静态站点。</footer>
+</body>
+</html>
